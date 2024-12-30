@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Category {
+  id        Int      @id @default(autoincrement()) 
+  name      String    @unique @db.VarChar(60)                
+  createdAt DateTime @default(now()) @map("created_at") 
+  updatedAt DateTime  @updatedAt @map("updated_at")    
+products  Product[]
+
+  @@map("Categories") 
+}
+
+
+
+
+model Product {
+  id          Int       @id @default(autoincrement())  
+  name        String    @db.VarChar(120)                
+  description String?   @db.Text               
+  price       Float    
+  currency    String    @db.VarChar(10)   @default("USD")              
+  quantity    Int       @default(0)
+  active      Boolean   @default(true)                  
+  createdAt    DateTime  @default(now()) @map("created_at")  
+  updatedAt     DateTime  @updatedAt @map("updated_at")     
+
+
+  // Foreign key to the Category model
+
+  categoryId  Int   @map("category_id")    
+  category    Category  @relation(fields: [categoryId], references: [id])  
+
+
+  @@map("products")  
+}
